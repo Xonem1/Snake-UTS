@@ -14,8 +14,8 @@ Speaker mySpeaker(D6);
 Ticker move;
 
 // Variables de control
-int score = 0;
-float fps=0.15;
+int score = 10;
+float fps=0.1;
 enum state
 {       
     start, stop, run, pause
@@ -37,7 +37,7 @@ struct objeto
 struct objeto head;
 struct objeto fruit;
 struct objeto wall;
-objeto* corp = new objeto[3000];
+objeto* corp = new objeto[score+10];
 
 // Funciones
 //Fruta
@@ -45,10 +45,10 @@ void SetFruit(){
     fruit.x = rand()%MAX_WIDTH+1;
     fruit.y = rand()%MAX_HEIGHT+1;
     map[fruit.x][fruit.y] = 1;
-    /*if(map[fruit.x][fruit.y] == 2){
+    if(map[fruit.x][fruit.y] == 2){
         SetFruit();
-    }*/
-    
+    }
+    display.display();
 }
 //wall
 void SetWall(){
@@ -104,9 +104,9 @@ void Push_Touch(){
 
 // Move the snake
 void MoveSnake(){
+    
     if(game_state==run){
-        display.clear_buffer();
-        if(MovDir!=0){
+        if(MovDir!=null){
             for(int i=(score+4);i>=1;i--){
                 corp[i]=corp[i-1];
             }
@@ -132,25 +132,20 @@ void MoveSnake(){
 // Crashed
         if(head.x==83 ||head.x==0 ||head.y==0 ||head.y==47 ){
             display.clear_buffer();
-            display.print_string("GameOver",15,5);
-            display.print_string("Perro!",20,15);
-            display.print_string("Your score is :",2,25);
-            char val1 = score/10+48;
-            char val2 = score%10+48;
-            display.print_char(val1,30,35);
-            display.print_char(val2,40,35);
+            display.print_string("GameOver Perro!",2,5);
+            display.print_string("Your score is :",2,15);
             display.display();
             MovDir=null;
             head.x=15;
             head.y=15;
             game_state=stop;
-            //score=0;
+            score=0;
+            fps=0.1;
         }else if((head.x==fruit.x)&&(head.y==fruit.y)){
           //Eat the mouse
             score+=1;
             SetFruit();
-            fps=fps-.005;
-            //printf("score: %d",score);
+            fps=fps-0.01;
             return move.attach(&MoveSnake, fps);
         }else{
             display.clear_buffer();
@@ -169,20 +164,15 @@ void MoveSnake(){
         for(int a=0;a<=(score+4);a++){
             if(corp[a].x==head.x && corp[a].y==head.y){
                 display.clear_buffer();
-                display.print_string("GameOver",15,5);
-                display.print_string("Perro!",20,15);
-                display.print_string("Your score is :",2,25);
-                char val1 = score/10+48;
-                char val2 = score%10+48;
-                display.print_char(val1,30,35);
-                display.print_char(val2,40,35);
-                display.display();
+                display.print_string("Game Over Perro!",13,5);
+                display.print_string("Your score is :",13,15);
                 MovDir=null;
                 head.x=15;
                 head.y=15;
                 game_state=stop;
-                //score=0;
+                score=0;
                 fps=0.1;
+                display.display();
             }
         }
     }
@@ -224,7 +214,7 @@ int main() {
             display.display();
         }
         display.clear_buffer();
-        display.print_string("Move JoyStick",0,20);
+        display.print_string("Press JoyStick",0,5);
         display.display();
  
         while(1) {
@@ -288,12 +278,12 @@ int main() {
         MovDir=right;
         head.x=15;
         head.y=15;
-        for (int i=0;i<=(score+4);i++){
+        for (int i=0;i<=4;i++){
             corp[i].x=(head.x)-(i+1);
             corp[i].y=15;
         }
         SetFruit();
-        move.attach(&MoveSnake, fps);
+        move.attach(&MoveSnake, 0.1);
         while (1){
             Direction joydir = joystick.get_direction();
             //bool button = joystick.get_direction();
@@ -308,8 +298,6 @@ int main() {
                 right_Dir();}/*
             else if (button){
                 Push_Touch();}*/
-            printf("score; %d\n",score);
-            wait_ms(10);
         }
     }
  

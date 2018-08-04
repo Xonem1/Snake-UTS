@@ -17,8 +17,8 @@
     #define CENTER 0*/
 
     //Constantes de la pantalla
-    #define MAX_WIDTH 84   
-    #define MAX_HEIGHT 48
+    #define MAX_WIDTH 82   
+    #define MAX_HEIGHT 46
 
     //Sonido
     #define SPKR 6
